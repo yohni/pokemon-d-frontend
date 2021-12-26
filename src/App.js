@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
-import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 import SelectCharacter from './Components/SelectCharacter';
 import Arena from './Components/Arena';

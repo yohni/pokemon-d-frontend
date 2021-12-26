@@ -43,7 +43,7 @@ export const Arena = ({ characterNFT, setCharacterNFT }) => {
         gameContract.off('AttackComplete', onAttackComplete);
       }
     };
-  }, [gameContract]);
+  }, [gameContract, setCharacterNFT]);
 
   useEffect(() => {
     const { ethereum } = window;
