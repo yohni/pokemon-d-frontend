@@ -3,21 +3,26 @@ import React, { useEffect, useState } from 'react';
 import PokemonD from '../../utils/PokemonD.json';
 import { CONTRACT_ADDRESS, transformCharacterData } from '../../constants';
 import './SelectCharacter.css';
+import LoadingIndicator from '../LoadingIndicator';
 
 const SelectCharacter = ({ setCharNFT }) => {
   const [characters, setCharacters] = useState([]);
   const [gameContract, setGameContract] = useState(null);
+  const [mintingCharacter, setMintingCharacter] = useState(false);
 
   const mintCharacterNFTAction = (characterId) => async () => {
     try {
       if (gameContract) {
+        setMintingCharacter(true);
         console.log('Minting character in progress...');
         const mintTxn = await gameContract.mintCharacterNFT(characterId);
         await mintTxn.wait();
         console.log('mintTxn', mintTxn);
+        setMintingCharacter(false);
       }
     } catch (error) {
       console.warn('MintCharacterAction Error:', error);
+      setMintingCharacter(false);
     }
   };
 
@@ -96,6 +101,14 @@ const SelectCharacter = ({ setCharNFT }) => {
       <h2>Mint Your Hero. Choose wisely.</h2>
       {characters.length > 0 && (
         <div className="character-grid">{renderCharacters()}</div>
+      )}
+      {mintingCharacter && (
+        <div className="loading">
+          <div className="indicator">
+            <LoadingIndicator />
+            <p>Minting In Progress...</p>
+          </div>
+        </div>
       )}
     </div>
   );

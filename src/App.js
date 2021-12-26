@@ -3,22 +3,24 @@ import { ethers } from 'ethers';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 import SelectCharacter from './Components/SelectCharacter';
+import Arena from './Components/Arena';
+import LoadingIndicator from './Components/LoadingIndicator';
 import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
 import PokemonD from './utils/PokemonD.json';
 
 // Constants
-const TWITTER_HANDLE = '_buildspace';
-const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currAccount, setCurrAccount] = useState(null);
   const [currChar, setCurrChar] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const checkWalletConnection = async () => {
     try {
       const { ethereum } = window;
 
       if (!ethereum) {
         console.log('Make sure you have metamask!');
+        setIsLoading(false);
         return;
       } else {
         console.log('We have the etherium object', ethereum);
@@ -36,6 +38,7 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
   const connectWalletAction = async () => {
@@ -57,6 +60,9 @@ const App = () => {
   };
 
   const renderContent = () => {
+    if (isLoading) {
+      return <LoadingIndicator />;
+    }
     if (!currAccount) {
       return (
         <div className="connect-wallet-container">
@@ -74,6 +80,8 @@ const App = () => {
       );
     } else if (currAccount && !currChar) {
       return <SelectCharacter setCharNFT={setCurrChar} />;
+    } else if (currAccount && currChar) {
+      return <Arena characterNFT={currChar} setCharacterNFT={setCurrChar} />;
     }
   };
 
@@ -88,6 +96,7 @@ const App = () => {
       }
     };
     checkNetwork();
+    setIsLoading(true);
     checkWalletConnection();
   }, []);
 
@@ -108,6 +117,8 @@ const App = () => {
       } else {
         console.log('No character NFT found');
       }
+
+      setIsLoading(false);
     };
 
     if (currAccount) {
@@ -125,13 +136,7 @@ const App = () => {
           {renderContent()}
         </div>
         <div className="footer-container">
-          <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
-          <a
-            className="footer-text"
-            href={TWITTER_LINK}
-            target="_blank"
-            rel="noreferrer"
-          >{`built with @${TWITTER_HANDLE}`}</a>
+          <div className="footer-text">&copy; mindy 2021</div>
         </div>
       </div>
     </div>
